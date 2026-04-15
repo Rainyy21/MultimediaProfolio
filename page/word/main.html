@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>My Cartoon Scene</title>
+
+        <!-- stylesheet -->
+        <link href="./css/word.css" rel="stylesheet">
+        <link href="../../static/css/style.css" rel ="stylesheet">
+        <!-- javascript -->
+        <script src="./js/word.js" defer></script>
+      </head>
+
+
+  <body class = "bg">
+    <div class = "top-border">
+      <h1 class = "title" >Multimedia Dictionary</h1>
+    </div>
+    <div style="padding:5px; margin:20px;">
+      <a class = "back_btn" href="../../index.html">⬅ Return to Main Page</a>      
+    </div>
+  
+    <h1>Multimedia Dictionary</h1>
+
+    <div class = "section">
+      <label>Word</label>
+      <div class ="row">
+
+        <select id="wordSelect" onchange="syncWord()">
+          <option value="" data-sentence="">-- Select a Word --</option>
+          <option value="Butterfly" data-sentence="A butterfly uses its colorful wings to flutter from flower to flower.">Butterfly</option>
+          <option value="Ocean"     data-sentence="The ocean is a vast body of salty water that covers most of our planet.">Ocean</option>
+          <option value="Thunder"   data-sentence="Thunder is the loud rumbling sound you hear in the sky during a storm.">Thunder</option>
+          <option value="Library"   data-sentence="A library is a quiet place full of books where anyone can read and learn.">Library</option>
+          <option value="Telescope" data-sentence="A telescope makes faraway stars and planets appear much closer to us.">Telescope</option>
+        </select>
+        <button onclick="speakWord()">&#128264; Speak Word</button>
+      </div>
+    </div>
+
+    <div class = "section">
+      <label>Sentence</label>
+      <div class = "row">
+        <textarea id = "sentenceBox" rows="3" readonly placeholder="Select a word above..." ></textarea>
+        <button onclick="speakSentence()">&#128264; Speak Sentence</button>
+      </div>
+    </div>
+
+  </body>
+</html>
