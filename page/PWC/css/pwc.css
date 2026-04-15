@@ -1,0 +1,11 @@
+:root {
+  --brand: #f5a800;
+  --brand-dark: #c98700;
+  --brand-glow: rgba(245, 168, 0, 0.15);
+  --bg: #fffbf0;
+  --surface: #fff8e6;
+  --card-bg: #ffffff;
+  --cream: #1a1200;
+  --muted: #7a6030;
+  --border: rgba(245, 168, 0, 0.3);
+}
