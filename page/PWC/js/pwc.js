@@ -1,21 +1,31 @@
 // ── State ──
 let allCuisines = [];
+let customCuisines = [];
 let currentItem = null;
 let isSpeaking = false;
 
-// ── 1. Load data.json and build the menu ──
+// ── 1. Load data.json and LocalStorage ──
 async function loadData() {
   try {
+    // Load local storage items first
+    const saved = localStorage.getItem("customCuisines");
+    customCuisines = saved ? JSON.parse(saved) : [];
+
     const res = await fetch("./data.json");
     const data = await res.json();
-    allCuisines = data.cuisines;
+    
+    // Combine base data with custom data
+    allCuisines = [...data.cuisines, ...customCuisines];
     buildMenu(allCuisines);
   } catch (e) {
     console.error("Could not load data.json:", e);
+    // Even if fetch fails, show custom items if they exist
+    allCuisines = [...customCuisines];
+    buildMenu(allCuisines);
   }
 }
 
-// ── 2. Build sidebar menu dynamically from the JSON array ──
+// ── 2. Build sidebar menu dynamically ──
 function buildMenu(cuisines) {
   const list = document.getElementById("menuList");
   list.innerHTML = "";
@@ -41,7 +51,6 @@ function buildMenu(cuisines) {
     li.querySelector("a").addEventListener("click", (e) => {
       e.preventDefault();
       selectItem(item, li.querySelector("a"));
-      // Close sidebar on mobile after selection
       document.getElementById("sidebar").classList.remove("open");
     });
 
@@ -65,53 +74,43 @@ function filterMenu(query) {
 
 // ── 4. Select a cuisine and populate the food card ──
 function selectItem(item, linkEl) {
-  // Update active link
   document
     .querySelectorAll("#menuList a")
     .forEach((a) => a.classList.remove("active"));
-  linkEl.classList.add("active");
+  if (linkEl) linkEl.classList.add("active");
 
-  // Stop any current speech
   window.speechSynthesis.cancel();
   isSpeaking = false;
   currentItem = item;
   resetSpeakBtn();
 
-  // Populate image
   const img = document.getElementById("foodImg");
-  img.src = item.image;
+  img.src = item.image || "";
   img.alt = item.title;
   img.onerror = () => {
     img.src = `https://via.placeholder.com/800x280/fff8e6/c98700?text=${encodeURIComponent(item.emoji)}`;
   };
 
-  // Populate text fields
-  document.getElementById("countryBadge").textContent =
-    `${item.flag} ${item.country}`;
+  document.getElementById("countryBadge").textContent = `${item.flag} ${item.country}`;
   document.getElementById("dishEmoji").textContent = item.emoji;
   document.getElementById("foodOrigin").textContent = item.country;
   document.getElementById("foodTitle").textContent = item.title;
   document.getElementById("foodDesc").textContent = item.description;
   document.getElementById("foodFact").textContent = item.funFact;
 
-  // Show card, hide welcome screen
   document.getElementById("welcome").style.display = "none";
   const card = document.getElementById("foodCard");
   card.style.display = "block";
-  // Re-trigger fade-up animation
   card.style.animation = "none";
   void card.offsetWidth;
   card.style.animation = "";
 
-  // Scroll into view on mobile
   if (window.innerWidth <= 700) {
-    document
-      .getElementById("mainContent")
-      .scrollIntoView({ behavior: "smooth" });
+    document.getElementById("mainContent").scrollIntoView({ behavior: "smooth" });
   }
 }
 
-// ── 5. Toggle speech narration on/off ──
+// ── 5. Toggle speech narration ──
 function toggleSpeak() {
   if (!currentItem) return;
 
@@ -142,7 +141,6 @@ function toggleSpeak() {
   window.speechSynthesis.speak(msg);
 }
 
-// ── 6. Reset speak button to default state ──
 function resetSpeakBtn() {
   const btn = document.getElementById("speakBtn");
   if (!btn) return;
@@ -150,25 +148,56 @@ function resetSpeakBtn() {
   btn.innerHTML = '<i class="bi bi-volume-up-fill"></i> Hear the Story';
 }
 
-// ── PWA: capture install prompt ──
+// ── 6. Handle New Food Form Submission ──
+document.getElementById("addFoodForm").addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const newItem = {
+    id: "custom-" + Date.now(),
+    title: document.getElementById("newTitle").value,
+    country: document.getElementById("newCountry").value,
+    description: document.getElementById("newDesc").value,
+    funFact: document.getElementById("newFact").value,
+    emoji: document.getElementById("newEmoji").value,
+    flag: document.getElementById("newFlag").value,
+    image: document.getElementById("newImg").value
+  };
+
+  // Save to state and LocalStorage
+  customCuisines.push(newItem);
+  localStorage.setItem("customCuisines", JSON.stringify(customCuisines));
+
+  // Update global list and UI
+  allCuisines.push(newItem);
+  buildMenu(allCuisines);
+
+  // Close modal and select the new item
+  const modalEl = document.getElementById("addFoodModal");
+  const modal = bootstrap.Modal.getInstance(modalEl);
+  modal.hide();
+  e.target.reset();
+
+  selectItem(newItem);
+});
+
+// ── PWA & Banners ──
 let deferredPrompt;
 const installBtn = document.getElementById("installBtn");
 
 window.addEventListener("beforeinstallprompt", (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  installBtn.classList.add("visible");
+  installBtn.style.display = "inline-flex";
 });
 
 installBtn.addEventListener("click", async () => {
   if (!deferredPrompt) return;
   deferredPrompt.prompt();
   const { outcome } = await deferredPrompt.userChoice;
-  if (outcome === "accepted") installBtn.classList.remove("visible");
+  if (outcome === "accepted") installBtn.style.display = "none";
   deferredPrompt = null;
 });
 
-// ── Offline / online banner ──
 window.addEventListener("offline", () => {
   document.getElementById("offlineBanner").style.display = "block";
 });
@@ -176,12 +205,10 @@ window.addEventListener("online", () => {
   document.getElementById("offlineBanner").style.display = "none";
 });
 
-// ── Mobile hamburger toggle ──
 document.getElementById("menuToggle").addEventListener("click", () => {
   document.getElementById("sidebar").classList.toggle("open");
 });
 
-// Close sidebar when clicking outside it
 document.addEventListener("click", (e) => {
   const sidebar = document.getElementById("sidebar");
   const toggle = document.getElementById("menuToggle");
@@ -190,10 +217,8 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// ── Service Worker ──
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js").catch(console.warn);
 }
 
-// ── Start ──
 loadData();

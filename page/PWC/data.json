@@ -21,6 +21,46 @@
       "image": "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=800&q=80"
     },
     {
+      "id": "poutine",
+      "title": "Poutine",
+      "country": "Canada",
+      "flag": "🇨🇦",
+      "emoji": "🍟",
+      "description": "A classic Canadian dish consisting of crispy french fries and fresh cheese curds, all smothered in a rich, savory brown gravy.",
+      "funFact": "The name 'Poutine' is Quebec slang for 'a mess', but it's a very delicious mess!",
+      "image": "https://images.unsplash.com/photo-1586816001966-79b736744398?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "banh-mi",
+      "title": "Banh Mi",
+      "country": "Vietnam",
+      "flag": "🇻🇳",
+      "emoji": "🥖",
+      "description": "A vibrant sandwich featuring a crusty baguette filled with various meats (like pork belly or pâté), pickled carrots, daikon, cilantro, and chili.",
+      "funFact": "The baguette was introduced to Vietnam during the colonial period, but locals made it lighter and crispier using rice flour.",
+      "image": "https://images.unsplash.com/photo-1600454021970-351eff4a6554?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "currywurst",
+      "title": "Currywurst",
+      "country": "Germany",
+      "flag": "🇩🇪",
+      "emoji": "🌭",
+      "description": "A steamed then fried pork sausage typically cut into slices and seasoned with curry ketchup, topped with curry powder.",
+      "funFact": "About 800 million currywursts are eaten in Germany every year, with 70 million consumed in Berlin alone!",
+      "image": "https://images.unsplash.com/photo-1534170413557-0933758652d0?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "falafel",
+      "title": "Falafel",
+      "country": "Egypt",
+      "flag": "🇪🇬",
+      "emoji": "🧆",
+      "description": "Deep-fried balls or patties made from ground chickpeas or fava beans, typically served in a pita with salad and tahini sauce.",
+      "funFact": "While widely associated with the Middle East, many historians believe falafel originated in Egypt using fava beans.",
+      "image": "https://images.unsplash.com/photo-1593001874117-c99c4edb8881?auto=format&fit=crop&w=800&q=80"
+    },
+    {
       "id": "gelato",
       "title": "Artisan Gelato",
       "country": "Italy",
