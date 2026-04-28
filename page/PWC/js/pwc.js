@@ -131,7 +131,7 @@ function toggleSpeak() {
     isSpeaking = true;
     const btn = document.getElementById("speakBtn");
     btn.classList.add("speaking");
-    btn.textContent = "⏹ Stop";
+    btn.innerHTML = '<i class="bi bi-stop-fill"></i> Stop';
   };
 
   msg.onend = msg.onerror = () => {
@@ -147,7 +147,7 @@ function resetSpeakBtn() {
   const btn = document.getElementById("speakBtn");
   if (!btn) return;
   btn.classList.remove("speaking");
-  btn.textContent = "🔊 Hear the Story";
+  btn.innerHTML = '<i class="bi bi-volume-up-fill"></i> Hear the Story';
 }
 
 // ── PWA: capture install prompt ──

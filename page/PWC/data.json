@@ -1,0 +1,34 @@
+{
+  "cuisines": [
+    {
+      "id": "tacos",
+      "title": "Al Pastor Tacos",
+      "country": "Mexico",
+      "flag": "🇲🇽",
+      "emoji": "🌮",
+      "description": "Thinly sliced marinated pork shaved from a vertical spit, served on small corn tortillas with pineapple, onion, and cilantro.",
+      "funFact": "The vertical spit method was actually brought to Mexico by Lebanese immigrants!",
+      "image": "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "pad-thai",
+      "title": "Pad Thai",
+      "country": "Thailand",
+      "flag": "🇹🇭",
+      "emoji": "🍜",
+      "description": "Stir-fried rice noodles with eggs, tofu, tamarind pulp, fish sauce, dried shrimp, garlic, red chili pepper and palm sugar.",
+      "funFact": "Pad Thai was popularized in the 1930s to promote Thai nationalism and reduce rice consumption.",
+      "image": "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "id": "gelato",
+      "title": "Artisan Gelato",
+      "country": "Italy",
+      "flag": "🇮🇹",
+      "emoji": "🍦",
+      "description": "A frozen dessert of Italian origin, made with a base of butterfat, milk, and sugar, and flavored with fruit and nut purees.",
+      "funFact": "Gelato is served about 10-15 degrees warmer than American ice cream, which makes it feel creamier.",
+      "image": "https://images.unsplash.com/photo-1505394033343-e3dc37a05081?auto=format&fit=crop&w=800&q=80"
+    }
+  ]
+}
