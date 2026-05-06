@@ -1,0 +1,17 @@
+#social_button{
+    cursor: pointer;
+    background: none;
+    border: none;
+
+}
+#social_text{
+    margin-top: 0;
+    color:var(--text-color)
+}
+
+.social{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 4rem;
+}

@@ -1,0 +1,113 @@
+/* color for normal and darkmode */
+:root{
+    --primary-background-color: #ECEEDF;
+    --ground-footer-color: #CFAB8D;
+    --second-footer-color: #D9C4B0;
+    --secondary-background-color: #BBDCE5;
+    --temp_primary-color: #fffdd0;
+    --temp_secondary-color:#0070A9;
+    --text-color: #fcffe9;
+    margin: 0;
+    overflow: hidden;
+
+}
+/* trying to make the color change */
+*{
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* darkmode color */
+.dark{
+    --primary-background-color: #78B9B5;
+    --ground-footer-color: #320A6B;
+    --second-footer-color: #065084;
+    --secondary-background-color: #0F828C;
+    --text-color: #1a033b;
+
+}
+/* background color */
+.bg_color{
+    background-color: var(--primary-background-color);
+}
+
+/* the darkmode button */
+#theme_switch{
+    padding: 0;
+    background: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-style: none;
+    cursor: pointer;
+}
+
+#theme_switch svg{
+    width: 3.5rem;
+    height: auto;
+    fill:var(--secondary-background-color);
+    
+}
+
+#theme_switch svg:last-child{
+    display: none;
+}
+
+.dark #theme_switch svg:first-child{
+    display: none;
+}
+
+.dark #theme_switch svg:last-child{
+    display: block;
+}
+
+/* the style of the main page */
+
+.content_container{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.Square_content{
+    width: 50rem;
+    height: 50rem;
+    background: var(--secondary-background-color);
+    border-radius: 1rem;
+    box-sizing: border-box;
+}
+
+.website_top{
+    background-color: var(--temp_secondary-color);
+    padding:1rem;
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+
+}
+
+.website_text{
+    font-family: monospace;
+    font-size: 1.5rem;
+    color: var(--text-color);
+}
+
+.header{
+    display: flex;
+    flex-direction: row;
+}
+
+#home_button{
+    border-style: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+#home_button svg{
+    width: 3.5rem;
+    height: auto;
+    fill:var(--secondary-background-color);
+    
+}

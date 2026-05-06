@@ -1,0 +1,32 @@
+.link_list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 30rem;
+    padding: 1rem;
+}
+
+.link_card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background-color: var(--temp_secondary-color);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: var(--text-color);
+    font-family: monospace;
+    font-size: 1.2rem;
+    transition: opacity 0.2s ease;
+}
+
+.link_card:hover {
+    opacity: 0.8;
+}
+
+.link_card svg {
+    width: 2rem;
+    height: auto;
+    fill: var(--text-color);
+    flex-shrink: 0;
+}
