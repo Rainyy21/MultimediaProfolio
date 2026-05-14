@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Balloon Scene — Wick Editor Animation</title>
+  <style>
+    /* ── reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #1a1a2e;
+      color: #e0e0e0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 3rem;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 1.8rem;
+    }
+    header h1 {
+      font-size: 2rem;
+      background: linear-gradient(135deg, #87CEEB, #FFE030, #E83030);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.4rem;
+    }
+    header p {
+      color: #aaa;
+      font-size: 0.9rem;
+    }
+
+    /* ── animation container ── */
+    .stage {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+      border: 3px solid #2a4a6b;
+    }
+
+    canvas {
+      display: block;
+      background: #87CEEB;
+      /* Scale canvas to fit common screens while keeping 16:9 */
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* playback controls */
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 0.75rem;
+      background: #0f0f1e;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      width: 100%;
+      max-width: 700px;
+    }
+    .controls button {
+      background: #2a4a6b;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.35rem 0.9rem;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background 0.2s;
+    }
+    .controls button:hover { background: #3a6a9b; }
+    .controls button.active { background: #E83030; }
+
+    .fps-label { font-size: 0.8rem; color: #888; margin-left: auto; }
+
+    /* ── info cards ── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+      width: 100%;
+      max-width: 700px;
+    }
+    .card {
+      background: #16213e;
+      border: 1px solid #2a4a6b;
+      border-radius: 10px;
+      padding: 1rem;
+    }
+    .card h3 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #87CEEB;
+      margin-bottom: 0.5rem;
+    }
+    .card ul {
+      list-style: none;
+      font-size: 0.85rem;
+      line-height: 1.7;
+      color: #ccc;
+    }
+    .card ul li::before { content: "▸ "; color: #FFE030; }
+
+    /* ── download link ── */
+    .downloads {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .dl-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #2a4a6b;
+      color: #fff;
+      text-decoration: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .dl-btn:hover { background: #3a6a9b; transform: translateY(-2px); }
+    .dl-btn .icon { font-size: 1.1rem; }
+
+    footer {
+      margin-top: 3rem;
+      font-size: 0.75rem;
+      color: #555;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🎈 Balloon Scene</h1>
+  <p>Wick Editor Animation · 480×270 · 30 fps · 3-second seamless loop</p>
+</header>
+
+<div class="stage">
+  <canvas id="anim" width="960" height="540"></canvas>
+</div>
+
+<div class="controls">
+  <button id="btnPlay" class="active">⏸ Pause</button>
+  <button id="btnRestart">⟳ Restart</button>
+  <span class="fps-label" id="fpsCounter">30 fps</span>
+</div>
+
+<div class="info-grid">
+  <div class="card">
+    <h3>Layer Stack</h3>
+    <ul>
+      <li>Background — sky, sun, hills, ground</li>
+      <li>Middle — 3 tweened balloons rising</li>
+      <li>Foreground — 2 cloud clips drifting right</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Animation Details</h3>
+    <ul>
+      <li>Frame rate: 30 fps</li>
+      <li>Duration: 3 seconds (90 frames)</li>
+      <li>Tweens: position tweens per balloon &amp; cloud</li>
+      <li>Loop: seamless staggered phase</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Wick Editor Project</h3>
+    <ul>
+      <li>6 layers total</li>
+      <li>Background: static paths</li>
+      <li>Balloons: clip + 2-keyframe tween</li>
+      <li>Clouds: clip + 2-keyframe tween</li>
+    </ul>
+  </div>
+</div>
+
+<div class="downloads">
+  <a href="balloon_scene.wick" download class="dl-btn">
+    <span class="icon">📁</span> Download .wick Project File
+  </a>
+</div>
+
+<footer>
+  Open the .wick file in <strong>editor.wickeditor.com</strong> to inspect layers, tweens and paths.
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     CANVAS ANIMATION  — mirrors the Wick Editor scene
+     Layer draw order (bottom → top):
+       1. Background   : sky gradient, sun, hills, trees, ground
+       2. Balloon Red  : tweened clip, tween y 210 → -210 over 90 frames
+       3. Balloon Blue : same journey, staggered by 1/3 phase
+       4. Balloon Yellow: same, staggered by 2/3 phase
+       5. Cloud Front 1: drifts x -300 → 350 over 90 frames
+       6. Cloud Front 2: drifts x -80 → 350, staggered 45 frames
+═══════════════════════════════════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  const canvas = document.getElementById('anim');
+  const ctx    = canvas.getContext('2d');
+
+  // Internal resolution matches canvas attribute (2× for sharpness on HiDPI)
+  const CW = canvas.width;   // 960
+  const CH = canvas.height;  // 540
+  // Scene is designed for 480×270; we scale up by 2×
+  const S = 2;
+
+  const FPS          = 30;
+  const TOTAL_FRAMES = 90;        // 3 seconds
+  const MS_PER_FRAME = 1000 / FPS;
+
+  let frame     = 0;
+  let playing   = true;
+  let lastTs    = null;
+  let rafId     = null;
+  let fpsAcc    = 0;
+  let fpsFrames = 0;
+  let lastFpsTs = performance.now();
+
+  // ── utility ────────────────────────────────────────────────────────────
+  const lerp = (a, b, t) => a + (b - a) * t;
+
+  // progress 0→1 for a looped object with given phase offset (0→1)
+  const loopT = (f, phaseOffset) =>
+    ((f / TOTAL_FRAMES) + phaseOffset) % 1;
+
+  // ── drawing helpers ─────────────────────────────────────────────────────
+
+  function drawBalloon(cx, cy, bodyColor, highlightAlpha = 0.4) {
+    // Balloon body
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    // Rigging lines (draw first, behind basket)
+    ctx.strokeStyle = 'rgba(80,60,40,0.7)';
+    ctx.lineWidth = S * 1;
+    ctx.beginPath();
+    ctx.moveTo(-S*10, S*22); ctx.lineTo(0, S*38);
+    ctx.moveTo( S*10, S*22); ctx.lineTo(0, S*38);
+    ctx.stroke();
+
+    // Balloon body (oval)
+    ctx.fillStyle = bodyColor;
+    ctx.beginPath();
+    ctx.ellipse(0, -S*10, S*22, S*32, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    // Shading stripe (darker side)
+    const grad = ctx.createLinearGradient(-S*22, 0, S*22, 0);
+    grad.addColorStop(0,   'rgba(0,0,0,0.15)');
+    grad.addColorStop(0.4, 'rgba(0,0,0,0)');
+    grad.addColorStop(1,   'rgba(0,0,0,0.1)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.ellipse(0, -S*10, S*22, S*32, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    // Highlight
+    ctx.fillStyle = `rgba(255,255,255,${highlightAlpha})`;
+    ctx.beginPath();
+    ctx.ellipse(-S*8, -S*20, S*6, S*10, -0.4, 0, Math.PI*2);
+    ctx.fill();
+
+    // Basket
+    ctx.fillStyle = '#8B4513';
+    ctx.beginPath();
+    ctx.roundRect(-S*9, S*38, S*18, S*12, S*2);
+    ctx.fill();
+    ctx.strokeStyle = '#5a2d07';
+    ctx.lineWidth = S*0.8;
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function drawCloud(cx, cy, scale = 1, alpha = 0.88) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.scale(scale, scale);
+    ctx.globalAlpha = alpha;
+
+    ctx.fillStyle = '#ffffff';
+    const puffs = [[-25*S,5*S,18*S],[-5*S,-5*S,22*S],[15*S,5*S,18*S],[35*S,-3*S,16*S],[52*S,5*S,14*S]];
+    puffs.forEach(([x,y,r]) => {
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI*2);
+      ctx.fill();
+    });
+    // Fill bottom gap
+    ctx.fillRect(-30*S, 0, 95*S, 22*S);
+
+    ctx.globalAlpha = 1;
+    ctx.restore();
+  }
+
+  function drawTree(bx, by, trunkW, trunkH, canopyRx, canopyRy) {
+    // trunk
+    ctx.fillStyle = '#5c3810';
+    ctx.fillRect(bx - trunkW/2, by - trunkH, trunkW, trunkH);
+    // canopy
+    ctx.fillStyle = '#2e6e24';
+    ctx.beginPath();
+    ctx.ellipse(bx, by - trunkH - canopyRy*0.6, canopyRx, canopyRy, 0, 0, Math.PI*2);
+    ctx.fill();
+    // lighter inner canopy
+    ctx.fillStyle = '#3a8a2e';
+    ctx.beginPath();
+    ctx.ellipse(bx + canopyRx*0.2, by - trunkH - canopyRy*0.7, canopyRx*0.55, canopyRy*0.55, 0, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  // ── main draw ───────────────────────────────────────────────────────────
+
+  function draw() {
+    const f = frame;
+    ctx.clearRect(0, 0, CW, CH);
+
+    // ====================================================
+    // LAYER 1: BACKGROUND
+    // ====================================================
+
+    // Sky gradient
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, CH);
+    skyGrad.addColorStop(0,   '#3a7bce');
+    skyGrad.addColorStop(0.5, '#87CEEB');
+    skyGrad.addColorStop(1,   '#b8dff5');
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(0, 0, CW, CH);
+
+    // Sun glow
+    const sunX = S*390, sunY = S*55;
+    const glow = ctx.createRadialGradient(sunX,sunY, S*20, sunX,sunY, S*75);
+    glow.addColorStop(0,   'rgba(255,235,80,0.35)');
+    glow.addColorStop(0.5, 'rgba(255,210,60,0.15)');
+    glow.addColorStop(1,   'rgba(255,200,50,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(sunX, sunY, S*75, 0, Math.PI*2);
+    ctx.fill();
+
+    // Sun body
+    ctx.fillStyle = '#FFE030';
+    ctx.beginPath();
+    ctx.arc(sunX, sunY, S*33, 0, Math.PI*2);
+    ctx.fill();
+    // Sun inner highlight
+    ctx.fillStyle = '#FFF17a';
+    ctx.beginPath();
+    ctx.arc(sunX - S*8, sunY - S*8, S*12, 0, Math.PI*2);
+    ctx.fill();
+
+    // Distant hills
+    ctx.fillStyle = '#3c7a28';
+    ctx.beginPath();
+    ctx.ellipse(S*95, CH, S*200, S*85, 0, Math.PI, 0);
+    ctx.fill();
+
+    ctx.fillStyle = '#336822';
+    ctx.beginPath();
+    ctx.ellipse(S*340, CH, S*230, S*95, 0, Math.PI, 0);
+    ctx.fill();
+
+    // Ground strip
+    ctx.fillStyle = '#4fa830';
+    ctx.fillRect(0, CH - S*32, CW, S*32);
+    ctx.fillStyle = '#3c8a25';
+    ctx.fillRect(0, CH - S*20, CW, S*20);
+
+    // Background trees
+    const trees = [[-195,0,10,42,22,30],[-155,4,12,46,26,34],[168,0,12,48,26,35],[210,4,10,40,20,28]];
+    trees.forEach(([tx,ty,tw,th,crx,cry]) => {
+      const bx = (CW/2 + S*tx);
+      const by = (CH - S*32 + S*ty);
+      drawTree(bx, by, S*tw, S*th, S*crx, S*cry);
+    });
+
+    // ====================================================
+    // LAYER 2–4: MIDDLE — BALLOONS (rising, 3 phases)
+    // Each balloon travels y: 210 → -210 (Wick coords)
+    // In canvas coords (origin top-left, centre = CW/2,CH/2):
+    //   Wick y=+210  →  canvas y = CH/2 + S*210
+    //   Wick y=-210  →  canvas y = CH/2 - S*210
+    // Phase offsets: 0, 1/3, 2/3  → seamless stagger
+    // ====================================================
+
+    const balloons = [
+      { x: S*(-80),  color: '#E83030', phase: 0 },       // red
+      { x: S*(  20), color: '#3060E8', phase: 1/3 },     // blue
+      { x: S*( 110), color: '#F0C020', phase: 2/3 },     // yellow
+    ];
+
+    const wickYstart =  210;
+    const wickYend   = -210;
+
+    balloons.forEach(b => {
+      const t  = loopT(f, b.phase);
+      // slight sinusoidal horizontal sway
+      const sway = Math.sin(t * Math.PI * 4) * S * 5;
+      const cx = CW/2 + b.x + sway;
+      const cy = CH/2 + S * lerp(wickYstart, wickYend, t);
+      drawBalloon(cx, cy, b.color);
+    });
+
+    // ====================================================
+    // LAYER 5–6: FOREGROUND — CLOUDS (drifting right)
+    // Wick: x -300 → 350, y constant
+    // Canvas x: CW/2 + S*wickX
+    // ====================================================
+
+    const clouds = [
+      // [wickXstart, wickXend, wickY, phase, scale, alpha]
+      [-300, 350, -48, 0,    1.2, 0.88],
+      [-300, 350,  30, 0.5,  1.5, 0.72],
+      [-300, 350, -90, 0.25, 0.8, 0.60],
+    ];
+
+    clouds.forEach(([xs, xe, wy, phase, sc, al]) => {
+      const t  = loopT(f, phase);
+      const cx = CW/2 + S * lerp(xs, xe, t);
+      const cy = CH/2 + S * wy;
+      drawCloud(cx, cy, sc, al);
+    });
+
+    // ====================================================
+    // Frame counter overlay (small, bottom-right)
+    // ====================================================
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.fillRect(CW - S*62, CH - S*18, S*58, S*14);
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.font = `${S*9}px monospace`;
+    ctx.textAlign = 'right';
+    ctx.fillText(`Frame ${f+1} / ${TOTAL_FRAMES}`, CW - S*5, CH - S*6);
+    ctx.textAlign = 'left';
+  }
+
+  // ── animation loop ──────────────────────────────────────────────────────
+
+  function tick(ts) {
+    rafId = requestAnimationFrame(tick);
+    if (!playing) return;
+
+    if (lastTs === null) { lastTs = ts; }
+    const elapsed = ts - lastTs;
+
+    // FPS counter
+    fpsAcc += elapsed;
+    fpsFrames++;
+    if (ts - lastFpsTs >= 1000) {
+      document.getElementById('fpsCounter').textContent =
+        `${Math.round(1000 * fpsFrames / (ts - lastFpsTs))} fps`;
+      fpsAcc = fpsFrames = 0;
+      lastFpsTs = ts;
+    }
+
+    if (elapsed >= MS_PER_FRAME) {
+      frame  = (frame + 1) % TOTAL_FRAMES;
+      lastTs = ts - (elapsed % MS_PER_FRAME);   // smooth carry-over
+      draw();
+    }
+  }
+
+  // draw first frame immediately
+  draw();
+  rafId = requestAnimationFrame(tick);
+
+  // ── controls ────────────────────────────────────────────────────────────
+
+  document.getElementById('btnPlay').addEventListener('click', function () {
+    playing = !playing;
+    this.textContent = playing ? '⏸ Pause' : '▶ Play';
+    this.classList.toggle('active', playing);
+    if (playing) lastTs = null;   // reset delta so no jump
+  });
+
+  document.getElementById('btnRestart').addEventListener('click', () => {
+    frame  = 0;
+    lastTs = null;
+    draw();
+    if (!playing) { playing = true; document.getElementById('btnPlay').textContent = '⏸ Pause'; }
+  });
+
+})();
+</script>
+
+</body>
+</html>
